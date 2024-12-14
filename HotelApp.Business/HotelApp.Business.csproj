@@ -7,11 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services/" />
+    <ProjectReference Include="../HotelApp.Data/HotelApp.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../HotelApp.Data/HotelApp.Data.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

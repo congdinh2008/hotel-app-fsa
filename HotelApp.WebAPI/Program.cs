@@ -1,10 +1,14 @@
+using System.Text;
 using HotelApp.Business.Services;
 using HotelApp.Data.Contexts;
 using HotelApp.Data.Models;
 using HotelApp.Data.Repositories;
 using HotelApp.Data.UnitOfWork;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +38,26 @@ builder.Services.AddIdentity<User, Role>(options =>
 })
     .AddEntityFrameworkStores<HotelAppDbContext>()
     .AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"] ?? "congdinh2021@gmail.com"))
+    };
+});
+
 
 // Set up Serilog
 builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
@@ -66,6 +90,9 @@ builder.Services.AddScoped<IUserService, UserService>();
 // Add Role Services to the container
 builder.Services.AddScoped<IRoleService, RoleService>();
 
+// Add Auth Services to the container
+builder.Services.AddScoped<IAuthService, AuthService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -84,6 +111,10 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapControllers();
 
