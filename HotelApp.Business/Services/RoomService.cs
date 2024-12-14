@@ -1,5 +1,6 @@
 using HotelApp.Business.Services.Base;
 using HotelApp.Business.ViewModels.Room;
+using HotelApp.Data.Enums;
 using HotelApp.Data.Models;
 using HotelApp.Data.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
@@ -116,5 +117,33 @@ public class RoomService(IUnitOfWork unitOfWork) :
         };
 
         return roomViewModel;
+    }
+
+    public async Task<List<RoomViewModel>> SearchAvailableRoomAsync(SearchingAvailableRoomRequest request)
+    {
+        if (request.CheckInDate >= request.CheckOutDate)
+        {
+            throw new ArgumentException("Check-out Date must be greater than Check-in Date");
+        }
+
+        var availableRooms = await _unitOfWork.RoomRepository.GetQuery()
+            .Where(r => r.Status == RoomStatus.Available &&
+                _unitOfWork.Context.Bookings.Any(b => b.BookingDetails.Any(
+                    bd => bd.RoomId == r.Id &&
+                    b.CheckInDate < request.CheckOutDate &&
+                    b.CheckOutDate > request.CheckInDate)))
+            .Select(r => new RoomViewModel
+            {
+                Id = r.Id,
+                Number = r.Number,
+                Type = r.Type,
+                Capacity = r.Capacity,
+                PricePerNight = r.PricePerNight,
+                Status = r.Status,
+                IsActive = r.IsActive
+            })
+            .ToListAsync();
+
+        return availableRooms ?? [];
     }
 }
