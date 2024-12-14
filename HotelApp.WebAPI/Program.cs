@@ -5,6 +5,7 @@ using HotelApp.Data.Models;
 using HotelApp.Data.Repositories;
 using HotelApp.Data.UnitOfWork;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -119,6 +120,29 @@ if (app.Environment.IsDevelopment())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
     DbInitializer.SeedData(dbContext, userManager, roleManager);
 }
+
+// Error Handling:
+// Implement global error handling middleware to catch and log exceptions thrown during request processing.
+// Use status codes (e.g., BadRequest, NotFound, InternalServerError) to return appropriate HTTP responses for different error scenarios.
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+        var exception = exceptionHandlerPathFeature?.Error;
+
+        Log.Error(exception, "An unhandled exception has occurred.");
+
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "text/plain";
+        var errorResponse = new {
+             message = exception?.Message,
+             statusCode = context.Response.StatusCode
+        };
+        var errorResponseJson = System.Text.Json.JsonSerializer.Serialize(errorResponse);
+        await context.Response.WriteAsync(errorResponseJson);
+    });
+});
 
 app.UseHttpsRedirection();
 
