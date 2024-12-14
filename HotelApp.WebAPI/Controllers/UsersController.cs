@@ -1,21 +1,19 @@
 using HotelApp.Business.Services;
 using HotelApp.Business.ViewModels.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.WebAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class UsersController : ControllerBase
+public class UsersController(IUserService userService) : ControllerBase
 {
-    private readonly IUserService _userService;
-
-    public UsersController(IUserService userService)
-    {
-        _userService = userService;
-    }
+    private readonly IUserService _userService = userService;
 
     [HttpGet]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> GetAll()
     {
         var users = await _userService.GetAllAsync();
@@ -36,6 +34,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> GetById(Guid id)
     {
         var user = await _userService.GetByIdAsync(id);
@@ -60,6 +59,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("/changePassword")]
+    [Authorize(Roles = "Admin, Staff, Customer")]
     public async Task<IActionResult> ChangePassword(ChangePasswordViewModel changePasswordViewModel)
     {
         if (!ModelState.IsValid)
@@ -78,6 +78,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateUser(UserCreateViewModel userCreateViewModel)
     {
         if (!ModelState.IsValid)
@@ -96,6 +97,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> UpdateUser(Guid id, UserEditViewModel userEditViewModel)
     {
         if (!ModelState.IsValid)
@@ -114,6 +116,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteUser(Guid id)
     {
         bool result = await _userService.DeleteAsync(id);

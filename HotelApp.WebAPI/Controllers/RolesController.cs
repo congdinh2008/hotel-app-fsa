@@ -1,21 +1,19 @@
 using HotelApp.Business.Services;
 using HotelApp.Business.ViewModels.Role;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.WebAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class RolesController : ControllerBase
+public class RolesController(IRoleService roleService) : ControllerBase
 {
-    private readonly IRoleService _roleService;
-
-    public RolesController(IRoleService roleService)
-    {
-        _roleService = roleService;
-    }
+    private readonly IRoleService _roleService = roleService;
 
     [HttpGet]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> GetRoles()
     {
         var roles = await _roleService.GetAllAsync();
@@ -32,6 +30,7 @@ public class RolesController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> GetRole(Guid id)
     {
         var role = await _roleService.GetByIdAsync(id);
@@ -52,6 +51,7 @@ public class RolesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> CreateRole(RoleCreateUpdateViewModel request)
     {
         if (!ModelState.IsValid)
@@ -70,6 +70,7 @@ public class RolesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> UpdateRole(Guid id, RoleCreateUpdateViewModel request)
     {
         if (!ModelState.IsValid)
@@ -88,6 +89,7 @@ public class RolesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteRole(Guid id)
     {
         bool result = await _roleService.DeleteAsync(id);

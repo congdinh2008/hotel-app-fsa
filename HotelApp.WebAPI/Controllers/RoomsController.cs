@@ -1,21 +1,19 @@
 using HotelApp.Business.Services;
 using HotelApp.Business.ViewModels.Room;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelApp.WebAPI.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
-public class RoomsController : ControllerBase
+public class RoomsController(IRoomService roomService) : ControllerBase
 {
-    private readonly IRoomService _roomService;
-
-    public RoomsController(IRoomService roomService)
-    {
-        _roomService = roomService;
-    }
+    private readonly IRoomService _roomService = roomService;
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<IActionResult> GetAll()
     {
         var rooms = await _roomService.GetAllAsync();
@@ -24,6 +22,7 @@ public class RoomsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetById(Guid id)
     {
         var room = await _roomService.GetByIdAsync(id);
@@ -37,6 +36,7 @@ public class RoomsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> Create(RoomCreateUpdateViewModel request)
     {
         if (!ModelState.IsValid)
@@ -50,6 +50,7 @@ public class RoomsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> Update(Guid id, RoomCreateUpdateViewModel request)
     {
         if (!ModelState.IsValid)
@@ -63,6 +64,7 @@ public class RoomsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin, Staff")]
     public async Task<IActionResult> DeleteRoom(Guid id)
     {
         var result = await _roomService.DeleteAsync(id);
