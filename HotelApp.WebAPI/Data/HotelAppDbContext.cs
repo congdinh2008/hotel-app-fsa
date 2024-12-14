@@ -15,6 +15,8 @@ public class HotelAppDbContext(DbContextOptions<HotelAppDbContext> options) : Id
 
     public DbSet<BookingDetail> BookingDetails { get; set; } = default!;
 
+    public DbSet<BookingAmenity> BookingAmenities { get; set; } = default!;
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
