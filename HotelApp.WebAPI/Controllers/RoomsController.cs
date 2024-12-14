@@ -10,7 +10,8 @@ namespace HotelApp.WebAPI.Controllers;
 /// </summary>
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 [Tags("Rooms")]
 public class RoomsController(IRoomService roomService) : ControllerBase

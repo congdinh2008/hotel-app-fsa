@@ -11,7 +11,8 @@ namespace HotelApp.WebAPI.Controllers;
 /// <param name="userService">User service.</param>
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 [Tags("Users")]
 public class UsersController(IUserService userService) : ControllerBase

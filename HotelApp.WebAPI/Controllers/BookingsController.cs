@@ -14,7 +14,8 @@ namespace HotelApp.WebAPI.Controllers;
 /// <param name="logger">Logger.</param>
 [Authorize]
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 [Tags("Bookings")]
 public class BookingsController(IBookingService bookingService, IRoomService roomService, ILogger<BookingsController> logger) : ControllerBase

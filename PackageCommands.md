@@ -3,7 +3,7 @@ dotnet add HotelApp.WebAPI package Microsoft.EntityFrameworkCore
 dotnet add HotelApp.WebAPI package Microsoft.EntityFrameworkCore.SqlServer
 dotnet add HotelApp.WebAPI package Microsoft.EntityFrameworkCore.Design
 dotnet add HotelApp.WebAPI package Microsoft.AspNetCore.Identity.EntityFrameworkCore
-
+dotnet add HotelApp.WebAPI package Microsoft.AspNetCore.Mvc.Versioning
 
 <!-- Add package to HotelApp.Data -->
 dotnet add HotelApp.Data package Microsoft.EntityFrameworkCore

@@ -8,7 +8,8 @@ namespace HotelApp.WebAPI.Controllers;
 /// Controller responsible for handling authentication-related actions.
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 [Tags("Authentication")]
 public class AuthController(IAuthService authService) : ControllerBase
