@@ -1,4 +1,4 @@
-namespace HotelApp.WebAPI.Enums;
+namespace HotelApp.Data.Enums;
 
 public enum BookingStatus
 {

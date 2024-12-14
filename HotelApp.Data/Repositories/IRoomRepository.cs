@@ -1,6 +1,6 @@
-using HotelApp.WebAPI.Models;
+using HotelApp.Data.Models;
 
-namespace HotelApp.WebAPI.Repositories;
+namespace HotelApp.Data.Repositories;
 
 /// <summary>
 /// Interface for Room repository to handle CRUD operations for Room entities.

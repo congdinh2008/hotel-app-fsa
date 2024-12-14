@@ -11,6 +11,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Appendix", "Appendix", "{AC
 		MigrationCommands.md = MigrationCommands.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelApp.Business", "HotelApp.Business\HotelApp.Business.csproj", "{DE1E5B9C-C48E-4E0C-8F06-36D1866E4E32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelApp.Data", "HotelApp.Data\HotelApp.Data.csproj", "{D33CEAA2-A726-4B7D-AA28-F57EE21A2CC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{860B01B1-447B-4D1B-9B77-9579EDC96BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{860B01B1-447B-4D1B-9B77-9579EDC96BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{860B01B1-447B-4D1B-9B77-9579EDC96BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE1E5B9C-C48E-4E0C-8F06-36D1866E4E32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE1E5B9C-C48E-4E0C-8F06-36D1866E4E32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE1E5B9C-C48E-4E0C-8F06-36D1866E4E32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE1E5B9C-C48E-4E0C-8F06-36D1866E4E32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33CEAA2-A726-4B7D-AA28-F57EE21A2CC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33CEAA2-A726-4B7D-AA28-F57EE21A2CC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D33CEAA2-A726-4B7D-AA28-F57EE21A2CC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33CEAA2-A726-4B7D-AA28-F57EE21A2CC2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

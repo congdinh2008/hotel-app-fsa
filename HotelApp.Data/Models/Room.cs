@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using HotelApp.WebAPI.Enums;
+using HotelApp.Data.Enums;
 
-namespace HotelApp.WebAPI.Models;
+namespace HotelApp.Data.Models;
 
 [Table("Rooms")]
 public class Room

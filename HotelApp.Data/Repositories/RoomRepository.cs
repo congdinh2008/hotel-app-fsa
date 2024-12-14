@@ -1,7 +1,7 @@
-using HotelApp.WebAPI.Data;
-using HotelApp.WebAPI.Models;
+using HotelApp.Data.Contexts;
+using HotelApp.Data.Models;
 
-namespace HotelApp.WebAPI.Repositories;
+namespace HotelApp.Data.Repositories;
 
 public class RoomRepository(HotelAppDbContext context) : IRoomRepository
 {

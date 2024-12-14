@@ -1,9 +1,8 @@
-using System;
-using HotelApp.WebAPI.Enums;
-using HotelApp.WebAPI.Models;
+using HotelApp.Data.Enums;
+using HotelApp.Data.Models;
 using Microsoft.AspNetCore.Identity;
 
-namespace HotelApp.WebAPI.Data;
+namespace HotelApp.Data.Contexts;
 
 public static class DbInitializer
 {

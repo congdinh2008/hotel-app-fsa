@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
-namespace HotelApp.WebAPI.Models;
+namespace HotelApp.Data.Models;
 
 [Table("Users")]
 public class User: IdentityUser<Guid>

@@ -1,9 +1,9 @@
-using HotelApp.WebAPI.Models;
+using HotelApp.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace HotelApp.WebAPI.Data;
+namespace HotelApp.Data.Contexts;
 
 public class HotelAppDbContext(DbContextOptions<HotelAppDbContext> options) : IdentityDbContext<User, Role, Guid>(options)
 {
