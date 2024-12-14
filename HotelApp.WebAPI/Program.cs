@@ -1,8 +1,17 @@
+using HotelApp.WebAPI.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// Add DbContext
+builder.Services.AddDbContext<HotelAppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("HotelAppConnection"));
+});
 
 var app = builder.Build();
 
@@ -33,7 +42,7 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast");
 
-app.Run();
+await app.RunAsync();
 
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
