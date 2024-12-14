@@ -57,6 +57,9 @@ builder.Services.AddScoped<IRoomService, RoomService>();
 // Add Amenity Services to the container
 builder.Services.AddScoped<IAmenityService, AmenityService>();
 
+// Add Booking Services to the container
+builder.Services.AddScoped<IBookingService, BookingService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
