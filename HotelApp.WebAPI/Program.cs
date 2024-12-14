@@ -1,4 +1,6 @@
 using HotelApp.WebAPI.Data;
+using HotelApp.WebAPI.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,20 @@ builder.Services.AddDbContext<HotelAppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("HotelAppConnection"));
 });
 
+// Add Identity service
+builder.Services.AddIdentity<User, Role>(options =>
+{
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = true;
+    options.Password.RequiredLength = 8;
+    options.User.RequireUniqueEmail = true;
+    options.SignIn.RequireConfirmedEmail = false;
+})
+    .AddEntityFrameworkStores<HotelAppDbContext>()
+    .AddDefaultTokenProviders();
+    
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
