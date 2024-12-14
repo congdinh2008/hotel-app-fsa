@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Services/" />
+    <Folder Include="ViewModels/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../HotelApp.Data/HotelApp.Data.csproj" />
+  </ItemGroup>
+
 </Project>
