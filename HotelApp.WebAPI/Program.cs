@@ -28,13 +28,20 @@ builder.Services.AddIdentity<User, Role>(options =>
 })
     .AddEntityFrameworkStores<HotelAppDbContext>()
     .AddDefaultTokenProviders();
-    
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    // Seed Data
+    using var scope = app.Services.CreateScope();
+    var dbContext = scope.ServiceProvider.GetRequiredService<HotelAppDbContext>();
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+    DbInitializer.SeedData(dbContext, userManager, roleManager);
 }
 
 app.UseHttpsRedirection();
@@ -46,7 +53,7 @@ var summaries = new[]
 
 app.MapGet("/weatherforecast", () =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
+    var forecast = Enumerable.Range(1, 5).Select(index =>
         new WeatherForecast
         (
             DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
