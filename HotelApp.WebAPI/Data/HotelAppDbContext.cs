@@ -6,4 +6,6 @@ namespace HotelApp.WebAPI.Data;
 public class HotelAppDbContext(DbContextOptions<HotelAppDbContext> options) : DbContext(options)
 {
     public DbSet<Room> Rooms { get; set; } = default!;
+
+    public DbSet<Amenity> Amenities { get; set; } = default!;
 }
