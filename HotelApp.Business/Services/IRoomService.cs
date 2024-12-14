@@ -6,6 +6,8 @@ namespace HotelApp.Business.Services;
 
 public interface IRoomService: IBaseService<Room>
 {
+    Task<List<RoomViewModel>> SearchAvailableRoomAsync(SearchingAvailableRoomRequest request);
+
     new Task<List<RoomViewModel>> GetAllAsync();
 
     new Task<RoomViewModel> GetByIdAsync(Guid id);

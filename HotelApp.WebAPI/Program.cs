@@ -2,6 +2,7 @@ using HotelApp.Data.Contexts;
 using HotelApp.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,16 @@ builder.Services.AddIdentity<User, Role>(options =>
 })
     .AddEntityFrameworkStores<HotelAppDbContext>()
     .AddDefaultTokenProviders();
+
+// Set up Serilog
+builder.Host.UseSerilog((hostingContext, loggerConfiguration) =>
+{
+    loggerConfiguration
+        .ReadFrom.Configuration(hostingContext.Configuration)
+        .Enrich.FromLogContext()
+        .WriteTo.Console()
+        .WriteTo.File("Logs/logs.txt", rollingInterval: RollingInterval.Day);
+});
 
 var app = builder.Build();
 

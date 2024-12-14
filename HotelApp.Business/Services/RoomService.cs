@@ -4,23 +4,26 @@ using HotelApp.Data.Enums;
 using HotelApp.Data.Models;
 using HotelApp.Data.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HotelApp.Business.Services;
 
-public class RoomService(IUnitOfWork unitOfWork) :
-    BaseService<Room>(unitOfWork), IRoomService
+public class RoomService(IUnitOfWork unitOfWork, ILogger<RoomService> logger) :
+    BaseService<Room>(unitOfWork, logger), IRoomService
 {
     public Task<int> AddAsync(RoomCreateUpdateViewModel roomCreateViewModel)
     {
         // Check if room is null
         if (roomCreateViewModel == null)
         {
+            _logger.LogError("Room is null");
             throw new ArgumentNullException(nameof(roomCreateViewModel), "Room is null");
         }
 
         // Check if room number is already taken
         if (_unitOfWork.RoomRepository.GetQuery().Any(r => r.Number == roomCreateViewModel.Number))
         {
+            _logger.LogError("Room with number {RoomNumber} already exists", roomCreateViewModel.Number);
             throw new ArgumentException($"Room with number {roomCreateViewModel.Number} already exists");
         }
 
@@ -45,6 +48,7 @@ public class RoomService(IUnitOfWork unitOfWork) :
         // Check if room is null
         if (roomUpdateViewModel == null)
         {
+            _logger.LogError("Room is null");
             throw new ArgumentNullException(nameof(roomUpdateViewModel), "Room is null");
         }
 
@@ -54,12 +58,14 @@ public class RoomService(IUnitOfWork unitOfWork) :
         // Check if room exists
         if (room == null)
         {
+            _logger.LogError("Room with id {RoomId} not found", id);
             throw new ArgumentException($"Room with id {id} not found");
         }
 
         // Check if room number is already taken
         if (await _unitOfWork.RoomRepository.GetQuery().AnyAsync(r => r.Number == roomUpdateViewModel.Number && r.Id != id))
         {
+            _logger.LogError("Room with number {RoomNumber} already exists", roomUpdateViewModel.Number);
             throw new ArgumentException($"Room with number {roomUpdateViewModel.Number} already exists");
         }
 
@@ -101,6 +107,7 @@ public class RoomService(IUnitOfWork unitOfWork) :
 
         if (room == null)
         {
+            _logger.LogError("Room with id {RoomId} not found", id);
             throw new ArgumentException($"Room with id {id} not found");
         }
 
@@ -123,6 +130,7 @@ public class RoomService(IUnitOfWork unitOfWork) :
     {
         if (request.CheckInDate >= request.CheckOutDate)
         {
+            _logger.LogError("Check-out Date must be greater than Check-in Date");
             throw new ArgumentException("Check-out Date must be greater than Check-in Date");
         }
 

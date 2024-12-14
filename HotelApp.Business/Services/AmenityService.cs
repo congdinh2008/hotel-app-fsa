@@ -7,8 +7,8 @@ using Microsoft.Extensions.Logging;
 
 namespace HotelApp.Business.Services;
 
-public class AmenityService(IUnitOfWork unitOfWork) :
-    BaseService<Amenity>(unitOfWork), IAmenityService
+public class AmenityService(IUnitOfWork unitOfWork, ILogger<AmenityService> logger) :
+    BaseService<Amenity>(unitOfWork, logger), IAmenityService
 {
 
     public Task<int> AddAsync(AmenityCreateUpdateViewModel amenityCreateViewModel)
@@ -16,12 +16,14 @@ public class AmenityService(IUnitOfWork unitOfWork) :
         // Check if amenity is null
         if (amenityCreateViewModel == null)
         {
+            _logger.LogError("Amenity is null");
             throw new ArgumentNullException(nameof(amenityCreateViewModel), "Amenity is null");
         }
 
         // Check if amenity number is already taken
         if (_unitOfWork.AmenityRepository.GetQuery().Any(r => r.Name == amenityCreateViewModel.Name))
         {
+            _logger.LogError("Amenity with number {AmenityNumber} already exists", amenityCreateViewModel.Name);
             throw new ArgumentException($"Amenity with number {amenityCreateViewModel.Name} already exists");
         }
 
@@ -44,6 +46,7 @@ public class AmenityService(IUnitOfWork unitOfWork) :
         // Check if amenity is null
         if (amenityUpdateViewModel == null)
         {
+            _logger.LogError("Amenity is null");
             throw new ArgumentNullException(nameof(amenityUpdateViewModel), "Amenity is null");
         }
 
@@ -53,12 +56,14 @@ public class AmenityService(IUnitOfWork unitOfWork) :
         // Check if amenity exists
         if (amenity == null)
         {
+            _logger.LogError("Amenity with id {AmenityId} not found", id);
             throw new ArgumentException($"Amenity with id {id} not found");
         }
 
         // Check if amenity number is already taken
         if (await _unitOfWork.AmenityRepository.GetQuery().AnyAsync(r => r.Name == amenityUpdateViewModel.Name && r.Id != id))
         {
+            _logger.LogError("Amenity with number {AmenityNumber} already exists", amenityUpdateViewModel.Name);
             throw new ArgumentException($"Amenity with number {amenityUpdateViewModel.Name} already exists");
         }
 
@@ -96,6 +101,7 @@ public class AmenityService(IUnitOfWork unitOfWork) :
 
         if (amenity == null)
         {
+            _logger.LogError("Amenity with id {AmenityId} not found", id);
             throw new ArgumentException($"Amenity with id {id} not found");
         }
 

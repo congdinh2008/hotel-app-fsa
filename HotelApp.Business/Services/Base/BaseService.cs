@@ -1,11 +1,14 @@
+namespace HotelApp.Business.Services.Base;
 
 using System.Linq.Expressions;
 using HotelApp.Business.ViewModels;
 using HotelApp.Data.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
-namespace HotelApp.Business.Services.Base;
-public class BaseService<T>(IUnitOfWork unitOfWork) : IBaseService<T> where T : class
+public class BaseService<T>(IUnitOfWork unitOfWork, ILogger<BaseService<T>> logger) : IBaseService<T> where T : class
 {
+    protected readonly ILogger<BaseService<T>> _logger = logger;
     protected readonly IUnitOfWork _unitOfWork = unitOfWork;
 
     /// <summary>
@@ -17,6 +20,7 @@ public class BaseService<T>(IUnitOfWork unitOfWork) : IBaseService<T> where T : 
     {
         if (entity == null)
         {
+            _logger.LogError("Entity is null");
             throw new ArgumentNullException(nameof(entity));
         }
 
@@ -33,17 +37,19 @@ public class BaseService<T>(IUnitOfWork unitOfWork) : IBaseService<T> where T : 
     {
         if (entity == null)
         {
+            _logger.LogError("Entity is null");
             throw new ArgumentNullException(nameof(entity));
         }
 
         _unitOfWork.GenericRepository<T>().Add(entity);
         var result = await _unitOfWork.SaveChangesAsync();
 
-        if (result == 0)
+        if(result == 0)
         {
-            throw new InvalidOperationException("Entity not added");
+            _logger.LogError("Entity not added");
         }
 
+        _logger.LogInformation("Entity added successfully");
         return result;
     }
 
@@ -56,17 +62,19 @@ public class BaseService<T>(IUnitOfWork unitOfWork) : IBaseService<T> where T : 
     {
         if (entity == null)
         {
+            _logger.LogError("Entity is null");
             throw new ArgumentNullException(nameof(entity));
         }
 
         _unitOfWork.GenericRepository<T>().Update(entity);
         var result = await _unitOfWork.SaveChangesAsync() > 0;
 
-        if (!result)
+        if(!result)
         {
-            throw new InvalidOperationException("Entity not updated");
+            _logger.LogError("Entity not updated");
         }
 
+        _logger.LogInformation("Entity updated successfully");
         return result;
     }
 
@@ -79,17 +87,19 @@ public class BaseService<T>(IUnitOfWork unitOfWork) : IBaseService<T> where T : 
     {
         if (id == Guid.Empty)
         {
+            _logger.LogError("Entity ID is empty");
             throw new ArgumentNullException(nameof(id));
         }
 
         _unitOfWork.GenericRepository<T>().Delete(id);
         var result = _unitOfWork.SaveChanges() > 0;
 
-        if (!result)
+        if(!result)
         {
-            throw new InvalidOperationException("Entity not deleted");
+            _logger.LogError("Entity not deleted");
         }
 
+        _logger.LogInformation("Entity deleted successfully");
         return result;
     }
 
@@ -102,17 +112,19 @@ public class BaseService<T>(IUnitOfWork unitOfWork) : IBaseService<T> where T : 
     {
         if (id == Guid.Empty)
         {
+            _logger.LogError("Entity ID is empty");
             throw new ArgumentNullException(nameof(id));
         }
 
         _unitOfWork.GenericRepository<T>().Delete(id);
         var result = await _unitOfWork.SaveChangesAsync() > 0;
 
-        if (!result)
+        if(!result)
         {
-            throw new InvalidOperationException("Entity not deleted");
+            _logger.LogError("Entity not deleted");
         }
 
+        _logger.LogInformation("Entity deleted successfully");
         return result;
     }
 
@@ -125,17 +137,19 @@ public class BaseService<T>(IUnitOfWork unitOfWork) : IBaseService<T> where T : 
     {
         if (entity == null)
         {
+            _logger.LogError("Entity is null");
             throw new ArgumentNullException(nameof(entity));
         }
 
         _unitOfWork.GenericRepository<T>().Delete(entity);
         var result = await _unitOfWork.SaveChangesAsync() > 0;
 
-        if (!result)
+        if(!result)
         {
-            throw new InvalidOperationException("Entity not deleted");
+            _logger.LogError("Entity not deleted");
         }
 
+        _logger.LogInformation("Entity deleted successfully");
         return result;
     }
 

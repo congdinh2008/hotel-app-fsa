@@ -4,11 +4,12 @@ using HotelApp.Data.Models;
 using HotelApp.Data.UnitOfWork;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HotelApp.Business.Services;
 
-public class UserService(IUnitOfWork unitOfWork, UserManager<User> userManager) : 
-    BaseService<User>(unitOfWork), IUserService
+public class UserService(IUnitOfWork unitOfWork, ILogger<UserService> logger, UserManager<User> userManager) : 
+    BaseService<User>(unitOfWork, logger), IUserService
 {
     private readonly UserManager<User> _userManager = userManager;
 

@@ -9,14 +9,15 @@ using Microsoft.Extensions.Logging;
 
 namespace HotelApp.Business.Services;
 
-public class BookingService(IUnitOfWork unitOfWork) :
-    BaseService<Booking>(unitOfWork), IBookingService
+public class BookingService(IUnitOfWork unitOfWork, ILogger<BookingService> logger) :
+    BaseService<Booking>(unitOfWork, logger), IBookingService
 {
     public async Task<BookingViewModel> BookingRoomAsync(BookingRoomRequest request)
     {
         // Check if booking date is valid
         if (request.BookingDate >= request.CheckInDate)
         {
+            _logger.LogError("Check-in Date must be greater than Booking Date");
             throw new ArgumentException("Check-in Date must be greater than Booking Date");
         }
 
@@ -32,21 +33,23 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (rooms.Count != request.Rooms.Count)
         {
+            _logger.LogError("One or more rooms not found");
             throw new ArgumentException("One or more rooms not found");
         }
 
         // Check if rooms are available
         var unavailableRooms = await (from room in _unitOfWork.RoomRepository.GetQuery()
-                                      join bookingDetail in _unitOfWork.Context.BookingDetails on room.Id equals bookingDetail.RoomId
-                                      join bookingQuery in _unitOfWork.Context.Bookings on bookingDetail.BookingId equals bookingQuery.Id
-                                      where room.Status != RoomStatus.Available
-                                      where request.CheckInDate < bookingQuery.CheckOutDate
-                                      where request.CheckOutDate > bookingQuery.CheckInDate
-                                      where roomIds.Contains(room.Id)
-                                      select room).ToListAsync();
+                               join bookingDetail in _unitOfWork.Context.BookingDetails on room.Id equals bookingDetail.RoomId
+                               join bookingQuery in _unitOfWork.Context.Bookings on bookingDetail.BookingId equals bookingQuery.Id
+                               where room.Status != RoomStatus.Available
+                               where request.CheckInDate < bookingQuery.CheckOutDate
+                               where request.CheckOutDate > bookingQuery.CheckInDate
+                               where roomIds.Contains(room.Id)
+                               select room).ToListAsync();
 
         if (unavailableRooms.Any())
         {
+            _logger.LogError("One or more rooms are not available");
             throw new ArgumentException("One or more rooms are not available");
         }
 
@@ -102,6 +105,7 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (booking == null)
         {
+            _logger.LogError("Booking not found");
             throw new ArgumentException("Booking not found");
         }
 
@@ -110,6 +114,7 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (amenity == null)
         {
+            _logger.LogError("Amenity not found");
             throw new ArgumentException("Amenity not found");
         }
 
@@ -118,6 +123,7 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (room == null)
         {
+            _logger.LogError("Room not found");
             throw new ArgumentException("Room not found");
         }
 
@@ -138,7 +144,12 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (result == 0)
         {
+            _logger.LogError("Booking Amenity not added");
             throw new InvalidOperationException("Booking Amenity not added");
+        }
+        else
+        {
+            _logger.LogInformation("Booking Amenity added successfully");
         }
 
         return new BookingAmenityViewModel
@@ -172,6 +183,7 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (booking == null)
         {
+            _logger.LogError("Booking not found");
             throw new ArgumentException("Booking not found");
         }
 
@@ -180,18 +192,21 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (customer == null)
         {
+            _logger.LogError("Customer not found");
             throw new ArgumentException("Customer not found");
         }
 
         // Check check-in date
         if (request.CheckInDate < booking.CheckInDate)
         {
+            _logger.LogError("Check-in Date must be greater than or equal to Booking Check-in Date");
             throw new ArgumentException("Check-in Date must be greater than or equal to Booking Check-in Date");
         }
 
         // Check check-out date
         if (request.CheckInDate >= booking.CheckOutDate)
         {
+            _logger.LogError("Check-in Date must be less than Booking Check-out Date");
             throw new ArgumentException("Check-in Date must be less than Booking Check-out Date");
         }
 
@@ -203,7 +218,12 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (result == 0)
         {
+            _logger.LogError("Booking cannot be checked in or already checked in");
             throw new InvalidOperationException("Booking cannot be checked in or already checked in");
+        }
+        else
+        {
+            _logger.LogInformation("Booking checked in successfully");
         }
 
         return new BookingViewModel
@@ -235,6 +255,7 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (booking == null)
         {
+            _logger.LogError("Booking not found");
             throw new ArgumentException("Booking not found");
         }
 
@@ -243,6 +264,7 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (customer == null)
         {
+            _logger.LogError("Customer not found");
             throw new ArgumentException("Customer not found");
         }
 
@@ -255,8 +277,9 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         var totalPrice = roomPrice + bookingServicesPrice;
 
-        if (totalPrice <= 0)
+        if(totalPrice <= 0)
         {
+            _logger.LogError("Total price cannot be zero or negative");
             throw new InvalidOperationException("Total price cannot be zero or negative");
         }
 
@@ -268,7 +291,12 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (result == 0)
         {
+            _logger.LogError("Booking cannot be checked out or already checked out");
             throw new InvalidOperationException("Booking cannot be checked out or already checked out");
+        }
+        else
+        {
+            _logger.LogInformation("Booking checked out successfully");
         }
 
         return new CheckOutViewModel
@@ -329,6 +357,7 @@ public class BookingService(IUnitOfWork unitOfWork) :
 
         if (booking == null)
         {
+            _logger.LogError("Booking with id {BookingId} not found", id);
             throw new ArgumentException($"Booking with id {id} not found");
         }
 
