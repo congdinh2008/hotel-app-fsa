@@ -24,4 +24,7 @@ public class Room
 
     [Required]
     public RoomStatus Status { get; set; }
+
+    [Required]
+    public bool IsActive { get; set; }
 }
