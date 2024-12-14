@@ -93,6 +93,18 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 // Add Auth Services to the container
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+// Add CORS policy with allowed origins
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy", builder =>
+    {
+        options.AddPolicy("AllowedOrigins", builder => builder
+            .WithOrigins("http://localhost:4200", "https://localhost:4200")
+            .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization, HeaderNames.Accept, HeaderNames.XRequestedWith)
+            .WithMethods("GET", "POST", "PUT", "DELETE"));
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -111,6 +123,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+
+// Enable CORS using AllowedOrigins policy
+app.UseCors("AllowedOrigins");
 
 app.UseAuthentication();
 
