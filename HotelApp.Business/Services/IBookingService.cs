@@ -9,4 +9,12 @@ public interface IBookingService : IBaseService<Booking>
     new Task<List<BookingViewModel>> GetAllAsync();
 
     new Task<BookingViewModel> GetByIdAsync(Guid id);
+
+    Task<BookingViewModel> BookingRoomAsync(BookingRoomRequest request);
+
+    Task<BookingAmenityViewModel> BookingAmenityAsync(BookingAmenityRequest request);
+
+    Task<BookingViewModel> CheckInAsync(CheckInRequest request);
+
+    Task<CheckOutViewModel> CheckOutAsync(CheckOutRequest request);
 }
