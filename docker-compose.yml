@@ -1,0 +1,32 @@
+services:
+  hotelapp-webapi:
+    build:
+      context: .
+      dockerfile: HotelApp.WebAPI/Dockerfile
+    ports:
+      - "5134:5134"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - MSSQL_SA_PASSWORD=abcd@1234
+    depends_on:
+      hotelapp-db:
+        condition: service_healthy
+
+  hotelapp-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: hotelapp-db
+    ports:
+      - "1433:1433"
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=abcd@1234
+    volumes:
+      - sqlvolume:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S hotelapp-db -U sa -P 'abcd@1234' -C -Q 'SELECT 1'"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  sqlvolume:

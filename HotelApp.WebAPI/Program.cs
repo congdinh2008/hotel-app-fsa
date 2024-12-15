@@ -59,7 +59,18 @@ builder.Services.AddSwaggerGen(options =>
 // Add DbContext
 builder.Services.AddDbContext<HotelAppDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("HotelAppConnection"));
+    var connectionString = builder.Configuration.GetConnectionString("HotelAppConnection");
+    if(!builder.Environment.IsDevelopment())
+    {
+        var password = Environment.GetEnvironmentVariable("MSSQL_SA_PASSWORD");
+        System.Console.WriteLine($"MSSQL_SA_PASSWORD: {password}");
+        if (connectionString != null)
+        {
+            connectionString = string.Format(connectionString, password);
+            System.Console.WriteLine($"Connection String: {connectionString}");
+        }
+    }
+    options.UseSqlServer(connectionString);
 });
 
 // Add Identity service
@@ -162,11 +173,11 @@ if (app.Environment.IsDevelopment())
     });
 
     // Seed Data
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<HotelAppDbContext>();
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-    DbInitializer.SeedData(dbContext, userManager, roleManager);
+    using var scope2 = app.Services.CreateScope();
+    var dbContexts = scope2.ServiceProvider.GetRequiredService<HotelAppDbContext>();
+    var userManager = scope2.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var roleManager = scope2.ServiceProvider.GetRequiredService<RoleManager<Role>>();
+    DbInitializer.SeedData(dbContexts, userManager, roleManager);
 }
 
 // Error Handling:
@@ -183,9 +194,10 @@ app.UseExceptionHandler(errorApp =>
 
         context.Response.StatusCode = 500;
         context.Response.ContentType = "text/plain";
-        var errorResponse = new {
-             message = exception?.Message,
-             statusCode = context.Response.StatusCode
+        var errorResponse = new
+        {
+            message = exception?.Message,
+            statusCode = context.Response.StatusCode
         };
         var errorResponseJson = System.Text.Json.JsonSerializer.Serialize(errorResponse);
         await context.Response.WriteAsync(errorResponseJson);
@@ -204,5 +216,10 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Automatically perform database migration
+using var scope = app.Services.CreateScope();
+var dbContext = scope.ServiceProvider.GetRequiredService<HotelAppDbContext>();
+await dbContext.Database.MigrateAsync();
 
 await app.RunAsync();
