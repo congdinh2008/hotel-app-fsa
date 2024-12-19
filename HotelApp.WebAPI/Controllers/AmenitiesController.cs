@@ -1,4 +1,5 @@
 using HotelApp.Business.Services;
+using HotelApp.Business.ViewModels;
 using HotelApp.Business.ViewModels.Amenity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,10 +26,24 @@ public class AmenitiesController(IAmenityService amenityService) : ControllerBas
     [HttpGet]
     [AllowAnonymous]
     [ProducesResponseType(typeof(List<AmenityViewModel>), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll()
     {
         var amenities = await _amenityService.GetAllAsync();
+
+        return Ok(amenities);
+    }
+
+    /// <summary>
+    /// Searches for amenities based on the provided query.
+    /// </summary>
+    /// <param name="query">The search query.</param>
+    /// <returns>A paginated list of amenities.</returns>
+    [HttpGet("search")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(PaginatedResult<AmenityViewModel>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Search([FromQuery] SearchAmenityQuery query)
+    {
+        var amenities = await _amenityService.SearchAsync(query);
 
         return Ok(amenities);
     }

@@ -1,4 +1,6 @@
+using HotelApp.Business.Extensions;
 using HotelApp.Business.Services.Base;
+using HotelApp.Business.ViewModels;
 using HotelApp.Business.ViewModels.Amenity;
 using HotelApp.Data.Models;
 using HotelApp.Data.UnitOfWork;
@@ -116,5 +118,52 @@ public class AmenityService(IUnitOfWork unitOfWork, ILogger<AmenityService> logg
         };
 
         return amenityViewModel;
+    }
+
+    public async Task<PaginatedResult<AmenityViewModel>> SearchAsync(SearchAmenityQuery request)
+    {
+        // Get query
+        var query = _unitOfWork.AmenityRepository.GetQuery();
+
+        // Filter by name
+        if (!string.IsNullOrWhiteSpace(request.Name))
+        {
+            query = query.Where(r => r.Name.Contains(request.Name));
+        }
+
+        // Filter by min price
+        if (request.MinPrice.HasValue)
+        {
+            query = query.Where(r => r.Price >= request.MinPrice);
+        }
+
+        // Filter by max price
+        if (request.MaxPrice.HasValue)
+        {
+            query = query.Where(r => r.Price <= request.MaxPrice);
+        }
+
+        // Order by
+         query = !string.IsNullOrEmpty(request.OrderBy)
+            ? query.OrderByExtensition(request.OrderBy, request.OrderDirection.ToString())
+            : query.OrderBy(o => o.Name);
+
+        // Get total count
+        var totalCount = await query.CountAsync();
+
+        // Paginate
+        query = query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+        // Map Amenity to AmenityViewModel
+        var result = await query.Select(amenity => new AmenityViewModel
+        {
+            Id = amenity.Id,
+            Name = amenity.Name,
+            Description = amenity.Description,
+            Price = amenity.Price,
+            IsActive = amenity.IsActive
+        }).ToListAsync();
+
+        return new PaginatedResult<AmenityViewModel>(result, totalCount, request.Page, request.Size);
     }
 }

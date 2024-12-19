@@ -1,4 +1,6 @@
+using HotelApp.Business.Extensions;
 using HotelApp.Business.Services.Base;
+using HotelApp.Business.ViewModels;
 using HotelApp.Business.ViewModels.Room;
 using HotelApp.Data.Enums;
 using HotelApp.Data.Models;
@@ -153,5 +155,50 @@ public class RoomService(IUnitOfWork unitOfWork, ILogger<RoomService> logger) :
             .ToListAsync();
 
         return availableRooms ?? [];
+    }
+
+    public async Task<PaginatedResult<RoomViewModel>> SearchAsync(SearchRoomQuery request)
+    {
+        var query = _unitOfWork.RoomRepository.GetQuery();
+
+        if (!string.IsNullOrWhiteSpace(request.Number))
+        {
+            query = query.Where(r => r.Number.Contains(request.Number));
+        }
+
+        if (request.MinPrice.HasValue)
+        {
+            query = query.Where(r => r.PricePerNight >= request.MinPrice);
+        }
+
+        if (request.MaxPrice.HasValue)
+        {
+            query = query.Where(r => r.PricePerNight <= request.MaxPrice);
+        }
+
+        // Order by
+         query = !string.IsNullOrEmpty(request.OrderBy)
+            ? query.OrderByExtensition(request.OrderBy, request.OrderDirection.ToString())
+            : query.OrderBy(o => o.Number);
+
+        // Get total count
+        var totalCount = await query.CountAsync();
+
+        // Paginate
+        query = query.Skip((request.Page - 1) * request.Size).Take(request.Size);
+
+        // Map Amenity to AmenityViewModel
+        var result = await query.Select(amenity => new RoomViewModel
+        {
+            Id = amenity.Id,
+            Number = amenity.Number,
+            Type = amenity.Type,
+            Capacity = amenity.Capacity,
+            PricePerNight = amenity.PricePerNight,
+            Status = amenity.Status,
+            IsActive = amenity.IsActive
+        }).ToListAsync();
+
+        return new PaginatedResult<RoomViewModel>(result, totalCount, request.Page, request.Size);
     }
 }

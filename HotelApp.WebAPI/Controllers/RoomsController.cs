@@ -1,4 +1,5 @@
 using HotelApp.Business.Services;
+using HotelApp.Business.ViewModels;
 using HotelApp.Business.ViewModels.Room;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +52,21 @@ public class RoomsController(IRoomService roomService) : ControllerBase
         }
 
         return Ok(room);
+    }
+
+    /// <summary>
+    /// Searches for rooms based on the provided query.
+    /// </summary>
+    /// <param name="query">The search query.</param>
+    /// <returns>A paginated list of rooms.</returns>
+    [HttpGet("search")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(PaginatedResult<RoomViewModel>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> Search([FromQuery] SearchRoomQuery query)
+    {
+        var amenities = await _roomService.SearchAsync(query);
+
+        return Ok(amenities);
     }
 
     /// <summary>

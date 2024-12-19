@@ -1,4 +1,5 @@
 using HotelApp.Business.Services.Base;
+using HotelApp.Business.ViewModels;
 using HotelApp.Business.ViewModels.Room;
 using HotelApp.Data.Models;
 
@@ -11,6 +12,9 @@ public interface IRoomService: IBaseService<Room>
     new Task<List<RoomViewModel>> GetAllAsync();
 
     new Task<RoomViewModel> GetByIdAsync(Guid id);
+
+     Task<PaginatedResult<RoomViewModel>> SearchAsync(SearchRoomQuery request);
+
 
     Task<int> AddAsync(RoomCreateUpdateViewModel roomCreateViewModel);
 

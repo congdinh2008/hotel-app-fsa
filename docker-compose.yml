@@ -4,9 +4,8 @@ services:
       context: .
       dockerfile: HotelApp.WebAPI/Dockerfile
     ports:
-      - "5134:5134"
+      - "8081:8080"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
       - MSSQL_SA_PASSWORD=abcd@1234
     depends_on:
       hotelapp-db:

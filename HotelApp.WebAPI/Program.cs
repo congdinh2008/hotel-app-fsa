@@ -147,7 +147,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", builder =>
     {
         options.AddPolicy("AllowedOrigins", builder => builder
-            .WithOrigins("http://localhost:4200", "https://localhost:4200")
+            .WithOrigins("http://localhost:3000", "https://localhost:3000")
             .WithHeaders(HeaderNames.ContentType, HeaderNames.Authorization, HeaderNames.Accept, HeaderNames.XRequestedWith)
             .WithMethods("GET", "POST", "PUT", "DELETE"));
     });
