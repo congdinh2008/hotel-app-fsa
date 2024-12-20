@@ -75,7 +75,7 @@ public class AmenitiesController(IAmenityService amenityService) : ControllerBas
     /// <param name="request">The amenity details.</param>
     /// <returns>A boolean indicating success or failure.</returns>
     [HttpPost]
-    [Authorize(Roles = "Admin, Staff")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(AmenityCreateUpdateViewModel request)
@@ -97,7 +97,7 @@ public class AmenitiesController(IAmenityService amenityService) : ControllerBas
     /// <param name="request">The updated amenity details.</param>
     /// <returns>The updated amenity.</returns>
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin, Staff")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Update(Guid id, AmenityCreateUpdateViewModel request)
@@ -118,7 +118,7 @@ public class AmenitiesController(IAmenityService amenityService) : ControllerBas
     /// <param name="id">The ID of the amenity to delete.</param>
     /// <returns>A boolean indicating success or failure.</returns>
     [HttpDelete("{id}")]
-    [Authorize(Roles = "Admin, Staff")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteRoom(Guid id)
